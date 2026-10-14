@@ -3,6 +3,92 @@
 .react-flow__edge-textbg { filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45)); }
 .react-flow__controls { box-shadow: 0 5px 18px rgba(0, 0, 0, 0.28); }
 
+/* Custom nodes need explicit dimensions: otherwise React Flow measures only the label. */
+.app-shell .dfa-node {
+  box-sizing: border-box;
+  width: 68px;
+  height: 68px;
+  min-width: 68px;
+  min-height: 68px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 3px solid #2563eb !important;
+  border-radius: 50%;
+  font-size: 0.88rem;
+  font-weight: 750;
+  line-height: 1;
+  text-align: center;
+  isolation: isolate;
+}
+
+.app-shell .dfa-node.is-accepting::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 2px solid #10b981;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.app-shell .dfa-node.is-accepting { border-color: #10b981 !important; box-shadow: 0 5px 14px rgba(16, 185, 129, 0.18) !important; }
+.app-shell .dfa-node.is-equivalent { border-color: #8b5cf6 !important; box-shadow: 0 5px 14px rgba(139, 92, 246, 0.18) !important; }
+.app-shell .dfa-node.is-accepting.is-equivalent { border-color: #10b981 !important; }
+
+.app-shell .start-arrow {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-52%);
+  color: #f59e0b !important;
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 2;
+}
+
+.app-shell .equivalence-badge {
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  color: #6d28d9;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* Handles stay in the DOM for React Flow routing but are never decorative dots. */
+.app-shell .react-flow__handle.dfa-handle {
+  width: 8px !important;
+  height: 8px !important;
+  min-width: 8px !important;
+  min-height: 8px !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.app-shell .react-flow__edge-text {
+  font-weight: 750;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.app-shell .react-flow__edge-textbg {
+  fill: var(--surface) !important;
+  stroke: var(--border);
+  stroke-width: 1px;
+}
+
 @media (max-width: 640px) {
   .graph-canvas { height: 380px; }
   .graph-placeholder { min-height: 380px; }

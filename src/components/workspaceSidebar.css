@@ -1,0 +1,16 @@
+@media (min-width: 841px) {
+  .workspace-sidebar {
+    position: sticky;
+    top: 72px;
+    height: calc(100vh - 72px);
+    align-self: flex-start;
+    overflow: hidden;
+  }
+
+  .sidebar-content {
+    height: calc(100vh - 132px);
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    padding-bottom: 32px;
+  }
+}

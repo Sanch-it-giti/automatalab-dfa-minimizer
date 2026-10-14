@@ -1,5 +1,7 @@
 import { Position } from "@xyflow/react";
 
+export const EMPTY_PARTITIONS = Object.freeze([]);
+
 // These compact layouts leave room for start arrows, self-loops, and edge labels.
 // They are deliberately tuned for the small teaching DFAs supported by the editor.
 const layoutFor = (count) => {
@@ -19,7 +21,18 @@ const layoutFor = (count) => {
   ]);
 };
 
-export function buildGraphElements(dfa, partitions = []) {
+export function graphFingerprint(dfa, partitions = EMPTY_PARTITIONS) {
+  return JSON.stringify({
+    states: dfa.states,
+    alphabet: dfa.alphabet,
+    startState: dfa.startState,
+    finalStates: dfa.finalStates,
+    transitions: dfa.transitions,
+    partitions,
+  });
+}
+
+export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS) {
   const positions = layoutFor(dfa.states.length);
   const groupByState = new Map();
   partitions.forEach((group) => group.forEach((state) => groupByState.set(state, group)));
@@ -63,7 +76,8 @@ export function buildGraphElements(dfa, partitions = []) {
       id: `edge:${source}->${target}`,
       source,
       target,
-      type: isLoop ? "smoothstep" : "bezier",
+      // React Flow's built-in Bézier renderer is named "default", not "bezier".
+      type: isLoop ? "smoothstep" : "default",
       label: symbols.join(", "),
       animated: false,
       sourcePosition: isLoop || useUpperLane ? Position.Top : useLowerLane ? Position.Bottom : Position.Right,
