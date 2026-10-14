@@ -1,9 +1,26 @@
 import { Position } from "@xyflow/react";
 
-const columnsFor = (count) => Math.max(1, Math.ceil(Math.sqrt(count)));
+// These compact layouts leave room for start arrows, self-loops, and edge labels.
+// They are deliberately tuned for the small teaching DFAs supported by the editor.
+const layoutFor = (count) => {
+  const layouts = {
+    1: [[270, 165]],
+    2: [[105, 165], [415, 165]],
+    3: [[260, 45], [80, 275], [440, 275]],
+    4: [[80, 55], [420, 55], [80, 275], [420, 275]],
+    5: [[60, 45], [280, 45], [500, 45], [170, 275], [390, 275]],
+    6: [[60, 45], [280, 45], [500, 45], [60, 275], [280, 275], [500, 275]],
+    7: [[35, 45], [205, 45], [375, 45], [545, 45], [120, 275], [290, 275], [460, 275]],
+    8: [[35, 45], [205, 45], [375, 45], [545, 45], [35, 275], [205, 275], [375, 275], [545, 275]],
+  };
+  return layouts[count] || Array.from({ length: count }, (_, index) => [
+    (index % 4) * 180 + 35,
+    Math.floor(index / 4) * 220 + 45,
+  ]);
+};
 
 export function buildGraphElements(dfa, partitions = []) {
-  const columns = columnsFor(dfa.states.length);
+  const positions = layoutFor(dfa.states.length);
   const groupByState = new Map();
   partitions.forEach((group) => group.forEach((state) => groupByState.set(state, group)));
 
@@ -12,7 +29,7 @@ export function buildGraphElements(dfa, partitions = []) {
     return {
       id: state,
       type: "dfaState",
-      position: { x: (index % columns) * 220 + 65, y: Math.floor(index / columns) * 160 + 75 },
+      position: { x: positions[index][0], y: positions[index][1] },
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
       data: {

@@ -1,9 +1,10 @@
 import { memo, useCallback, useEffect, useMemo } from "react";
 import {
-  Background, Controls, Handle, MiniMap, Position, ReactFlow, useEdgesState, useNodesState, useReactFlow,
+  Background, Controls, Handle, Position, ReactFlow, useEdgesState, useNodesState, useReactFlow,
 } from "@xyflow/react";
 import { Maximize2, RotateCcw } from "lucide-react";
 import { buildGraphElements } from "../utils/dfaGraph";
+import "./dfaVisualization.css";
 
 const StateNode = memo(({ data }) => <>
   <Handle type="target" position={Position.Left} className="dfa-handle" />
@@ -31,8 +32,13 @@ export default function DFAVisualization({ dfa, title, partitions = [] }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState(graph.edges);
   const { fitView } = useReactFlow();
 
-  useEffect(() => { setNodes(graph.nodes); setEdges(graph.edges); }, [graph, setNodes, setEdges]);
-  const resetPositions = useCallback(() => { setNodes(graph.nodes); requestAnimationFrame(() => fitView({ padding: 0.25, duration: 250 })); }, [fitView, graph.nodes, setNodes]);
+  useEffect(() => {
+    setNodes(graph.nodes);
+    setEdges(graph.edges);
+    // Wait for React Flow to measure custom state nodes before fitting their outer rings/arrows.
+    requestAnimationFrame(() => fitView({ padding: 0.38, duration: 180 }));
+  }, [fitView, graph, setEdges, setNodes]);
+  const resetPositions = useCallback(() => { setNodes(graph.nodes); requestAnimationFrame(() => fitView({ padding: 0.38, duration: 250 })); }, [fitView, graph.nodes, setNodes]);
 
-  return <section className="panel graph-panel"><div className="panel-heading"><div><h2>{title}</h2><p>Drag states, scroll to zoom, and drag the canvas to pan.</p></div><GraphToolbar reset={resetPositions} fitView={fitView} /></div><div className="graph-canvas"><ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} fitView fitViewOptions={{ padding: 0.25 }} minZoom={0.35} maxZoom={2.2} colorMode="dark" nodesConnectable={false} edgesFocusable={false}><Background color="#334155" gap={20} size={1} /><Controls showInteractive={false} /><MiniMap nodeColor={(node) => node.data?.equivalent ? "#a78bfa" : node.data?.accepting ? "#34d399" : "#38bdf8"} maskColor="rgba(9, 14, 27, 0.75)" /></ReactFlow></div></section>;
+  return <section className="panel graph-panel"><div className="panel-heading"><div><h2>{title}</h2><p>Drag states, scroll to zoom, and drag the canvas to pan.</p></div><GraphToolbar reset={resetPositions} fitView={fitView} /></div><div className="graph-canvas"><ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} fitView fitViewOptions={{ padding: 0.38 }} minZoom={0.3} maxZoom={2.2} colorMode="dark" nodesConnectable={false} edgesFocusable={false}><Background color="#334155" gap={24} size={1} /><Controls showInteractive={false} /></ReactFlow></div></section>;
 }
