@@ -10,7 +10,7 @@ const StateNode = memo(({ data }) => <>
   <Handle type="target" position={Position.Left} className="dfa-handle" />
   <Handle type="target" position={Position.Top} id="top-target" className="dfa-handle" />
   <Handle type="source" position={Position.Top} id="top-source" className="dfa-handle" />
-  <div className={`dfa-node ${data.accepting ? "is-accepting" : ""} ${data.equivalent ? "is-equivalent" : ""}`}>
+  <div className={`dfa-node ${data.accepting ? "is-accepting" : ""} ${data.equivalent ? "is-equivalent" : ""} ${data.unreachable ? "is-unreachable" : ""} ${data.dimmed ? "is-dimmed" : ""} ${Number.isInteger(data.partitionIndex) ? `partition-${data.partitionIndex % 6}` : ""}`}>
     {data.initial && <span className="start-arrow" aria-label="Initial state">→</span>}
     <span>{data.label}</span>
   </div>
@@ -26,10 +26,10 @@ function GraphToolbar({ reset, fitView }) {
   return <div className="graph-toolbar"><button className="icon-button" onClick={reset} title="Reset node positions" aria-label="Reset node positions"><RotateCcw size={16} /></button><button className="icon-button" onClick={() => fitView({ padding: 0.25, duration: 250 })} title="Fit graph to view" aria-label="Fit graph to view"><Maximize2 size={16} /></button></div>;
 }
 
-export default function DFAVisualization({ dfa, title, partitions = EMPTY_PARTITIONS, darkMode = false }) {
+export default function DFAVisualization({ dfa, title, partitions = EMPTY_PARTITIONS, highlight = null, darkMode = false }) {
   // A content key prevents React Flow state from being reset on theme/UI-only renders.
-  const graphKey = useMemo(() => graphFingerprint(dfa, partitions), [dfa, partitions]);
-  const graph = useMemo(() => buildGraphElements(dfa, partitions), [dfa, partitions]);
+  const graphKey = useMemo(() => graphFingerprint(dfa, partitions, highlight), [dfa, highlight, partitions]);
+  const graph = useMemo(() => buildGraphElements(dfa, partitions, highlight), [dfa, highlight, partitions]);
   const [nodes, setNodes, onNodesChange] = useNodesState(graph.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(graph.edges);
   const { fitView } = useReactFlow();

@@ -34,6 +34,9 @@
 .app-shell .dfa-node.is-accepting { border-color: #10b981 !important; box-shadow: 0 5px 14px rgba(16, 185, 129, 0.18) !important; }
 .app-shell .dfa-node.is-equivalent { border-color: #8b5cf6 !important; box-shadow: 0 5px 14px rgba(139, 92, 246, 0.18) !important; }
 .app-shell .dfa-node.is-accepting.is-equivalent { border-color: #10b981 !important; }
+.app-shell .dfa-node.is-unreachable { border-color: #f59e0b !important; border-style: dashed; opacity: .78; box-shadow: 0 5px 14px rgba(245, 158, 11, .18) !important; }
+.app-shell .dfa-node.is-dimmed { opacity: .32; }
+.app-shell .dfa-node.partition-0 { border-color: #2563eb !important; }.app-shell .dfa-node.partition-1 { border-color: #10b981 !important; }.app-shell .dfa-node.partition-2 { border-color: #f59e0b !important; }.app-shell .dfa-node.partition-3 { border-color: #ec4899 !important; }.app-shell .dfa-node.partition-4 { border-color: #8b5cf6 !important; }.app-shell .dfa-node.partition-5 { border-color: #0891b2 !important; }
 
 .app-shell .start-arrow {
   position: absolute;

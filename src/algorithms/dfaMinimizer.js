@@ -117,12 +117,16 @@ export function minimizeDFA(dfa) {
 
   const steps = [
     {
+      kind: "reachability",
       title: "Remove unreachable states",
       description: `${unreachable.length} unreachable state(s) found.`,
+      reachable: [...reachable],
       unreachable: [...unreachable],
-      partitions: partitions.map((group) => [...group]),
+      // Partitioning starts in the next educational stage, after reachability is complete.
+      partitions: [],
     },
     {
+      kind: "initial",
       title: "Initial partition",
       description: "Separate accepting and non-accepting states.",
       partitions: partitions.map((group) => [...group]),
@@ -137,6 +141,7 @@ export function minimizeDFA(dfa) {
     iteration++;
 
     const nextPartitions = [];
+    const splits = [];
 
     for (const group of partitions) {
       const buckets = new Map();
@@ -153,6 +158,16 @@ export function minimizeDFA(dfa) {
 
       if (buckets.size > 1) {
         changed = true;
+        splits.push({
+          from: [...group],
+          buckets: [...buckets.values()].map((bucket) => ({
+            states: [...bucket],
+            signature: dfa.alphabet.map((symbol) => {
+              const destination = dfa.transitions[bucket[0]][symbol];
+              return partitions.findIndex((partition) => partition.includes(destination));
+            }),
+          })),
+        });
       }
 
       nextPartitions.push(...buckets.values());
@@ -161,11 +176,13 @@ export function minimizeDFA(dfa) {
     partitions = nextPartitions;
 
     steps.push({
+      kind: "refinement",
       title: `Refinement ${iteration}`,
       description: changed
         ? "Split states with different transition behavior."
         : "No more splits are required.",
       partitions: partitions.map((group) => [...group]),
+      splits,
     });
   }
 
@@ -209,6 +226,7 @@ export function minimizeDFA(dfa) {
   };
 
   steps.push({
+    kind: "complete",
     title: "Minimized DFA generated",
     description: `Reduced ${dfa.states.length} states to ${groupNames.length}.`,
     partitions: partitions.map((group) => [...group]),

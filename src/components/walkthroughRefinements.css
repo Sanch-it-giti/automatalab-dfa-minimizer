@@ -1,0 +1,2 @@
+.reachability-groups{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.reachability-groups p{margin:0;padding:10px;border-radius:9px;background:var(--surface-muted);color:var(--muted);font-size:.78rem}.reachability-groups b{display:block;color:var(--text);margin-bottom:3px}.reachability-groups p+p b{color:#d97706}
+@media(max-width:560px){.reachability-groups{grid-template-columns:1fr}}

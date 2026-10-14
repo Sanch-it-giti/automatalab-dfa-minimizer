@@ -21,7 +21,7 @@ const layoutFor = (count) => {
   ]);
 };
 
-export function graphFingerprint(dfa, partitions = EMPTY_PARTITIONS) {
+export function graphFingerprint(dfa, partitions = EMPTY_PARTITIONS, highlight = null) {
   return JSON.stringify({
     states: dfa.states,
     alphabet: dfa.alphabet,
@@ -29,16 +29,20 @@ export function graphFingerprint(dfa, partitions = EMPTY_PARTITIONS) {
     finalStates: dfa.finalStates,
     transitions: dfa.transitions,
     partitions,
+    highlight,
   });
 }
 
-export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS) {
+export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS, highlight = null) {
   const positions = layoutFor(dfa.states.length);
   const groupByState = new Map();
   partitions.forEach((group) => group.forEach((state) => groupByState.set(state, group)));
+  const partitionByState = new Map();
+  highlight?.partitions?.forEach((group, index) => group.forEach((state) => partitionByState.set(state, index)));
 
   const nodes = dfa.states.map((state, index) => {
     const group = groupByState.get(state);
+    const partitionIndex = partitionByState.get(state);
     return {
       id: state,
       type: "dfaState",
@@ -51,6 +55,9 @@ export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS) {
         accepting: dfa.finalStates.includes(state),
         equivalent: group?.length > 1,
         groupLabel: group?.length > 1 ? `{${group.join(", ")}}` : null,
+        partitionIndex,
+        unreachable: highlight?.unreachable?.includes(state) || false,
+        dimmed: highlight?.dimmed?.includes(state) || false,
       },
     };
   });
