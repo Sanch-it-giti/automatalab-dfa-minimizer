@@ -43,6 +43,7 @@ export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS, highlight
   const nodes = dfa.states.map((state, index) => {
     const group = groupByState.get(state);
     const partitionIndex = partitionByState.get(state);
+    const simulation = highlight?.simulation;
     return {
       id: state,
       type: "dfaState",
@@ -58,6 +59,8 @@ export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS, highlight
         partitionIndex,
         unreachable: highlight?.unreachable?.includes(state) || false,
         dimmed: highlight?.dimmed?.includes(state) || false,
+        active: simulation?.activeState === state,
+        visited: simulation?.visitedStates?.includes(state) || false,
       },
     };
   });
@@ -79,6 +82,7 @@ export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS, highlight
     // Put opposite directions on opposite sides so their curves and labels do not overlap.
     const useLowerLane = reverseExists && source.localeCompare(target) < 0;
     const useUpperLane = reverseExists && !useLowerLane;
+    const activeTransition = highlight?.simulation?.activeTransition?.source === source && highlight?.simulation?.activeTransition?.target === target;
     return {
       id: `edge:${source}->${target}`,
       source,
@@ -91,9 +95,9 @@ export function buildGraphElements(dfa, partitions = EMPTY_PARTITIONS, highlight
       targetPosition: isLoop || useUpperLane ? Position.Top : useLowerLane ? Position.Bottom : Position.Left,
       sourceHandle: isLoop || useUpperLane ? "top-source" : useLowerLane ? "bottom-source" : null,
       targetHandle: isLoop || useUpperLane ? "top-target" : useLowerLane ? "bottom-target" : null,
-      data: { isLoop },
-      style: { stroke: "#38bdf8", strokeWidth: 2 },
-      markerEnd: { type: "arrowclosed", color: "#38bdf8" },
+      data: { isLoop, active: activeTransition },
+      style: { stroke: activeTransition ? "#f97316" : "#38bdf8", strokeWidth: activeTransition ? 3 : 2 },
+      markerEnd: { type: "arrowclosed", color: activeTransition ? "#f97316" : "#38bdf8" },
       labelStyle: { fill: "#e2e8f0", fontWeight: 700, fontSize: 12 },
       labelBgStyle: { fill: "#0f172a", fillOpacity: 0.92 },
       labelBgPadding: [4, 3],

@@ -10,7 +10,7 @@ const StateNode = memo(({ data }) => <>
   <Handle type="target" position={Position.Left} className="dfa-handle" />
   <Handle type="target" position={Position.Top} id="top-target" className="dfa-handle" />
   <Handle type="source" position={Position.Top} id="top-source" className="dfa-handle" />
-  <div className={`dfa-node ${data.accepting ? "is-accepting" : ""} ${data.equivalent ? "is-equivalent" : ""} ${data.unreachable ? "is-unreachable" : ""} ${data.dimmed ? "is-dimmed" : ""} ${Number.isInteger(data.partitionIndex) ? `partition-${data.partitionIndex % 6}` : ""}`}>
+  <div className={`dfa-node ${data.accepting ? "is-accepting" : ""} ${data.equivalent ? "is-equivalent" : ""} ${data.unreachable ? "is-unreachable" : ""} ${data.dimmed ? "is-dimmed" : ""} ${data.active ? "is-active" : ""} ${data.visited ? "is-visited" : ""} ${Number.isInteger(data.partitionIndex) ? `partition-${data.partitionIndex % 6}` : ""}`}>
     {data.initial && <span className="start-arrow" aria-label="Initial state">→</span>}
     <span>{data.label}</span>
   </div>
