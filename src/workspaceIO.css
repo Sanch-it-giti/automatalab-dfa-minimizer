@@ -1,0 +1,2 @@
+.workspace-name input{display:block;width:150px;border:0;background:transparent;color:var(--text);font:700 .86rem inherit;padding:2px 0;outline:none}.workspace-name input:focus{border-bottom:1px solid var(--primary)}.save-status{font-size:.72rem;color:var(--muted);white-space:nowrap}.file-input{display:none}.graph-actions{display:flex;gap:5px;align-items:center}.graph-svg{font-size:.62rem;font-weight:800}
+@media(max-width:840px){.save-status{display:none}}@media(max-width:560px){.workspace-name{display:none}}

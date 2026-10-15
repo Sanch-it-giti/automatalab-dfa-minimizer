@@ -2,8 +2,9 @@ import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Background, Controls, Handle, Position, ReactFlow, useEdgesState, useNodesState, useReactFlow,
 } from "@xyflow/react";
-import { Maximize2, RotateCcw } from "lucide-react";
+import { Download, Maximize2, RotateCcw } from "lucide-react";
 import { buildGraphElements, EMPTY_PARTITIONS, graphFingerprint } from "../utils/dfaGraph";
+import { exportDiagram } from "../utils/diagramExport";
 import "./dfaVisualization.css";
 
 const StateNode = memo(({ data }) => <>
@@ -46,5 +47,5 @@ export default function DFAVisualization({ dfa, title, partitions = EMPTY_PARTIT
   }, [fitView, graphKey, graph.edges, graph.nodes, setEdges, setNodes]);
   const resetPositions = useCallback(() => { setNodes(graph.nodes); requestAnimationFrame(() => fitView({ padding: 0.38, duration: 250 })); }, [fitView, graph.nodes, setNodes]);
 
-  return <section className="panel graph-panel"><div className="panel-heading"><div><h2>{title}</h2><p>Drag states, scroll to zoom, and drag the canvas to pan.</p></div><GraphToolbar reset={resetPositions} fitView={fitView} /></div><div className="graph-canvas"><ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} fitView fitViewOptions={{ padding: 0.38 }} minZoom={0.3} maxZoom={2.2} colorMode={darkMode ? "dark" : "light"} nodesConnectable={false} edgesFocusable={false}><Background color={darkMode ? "#334155" : "#cbd5e1"} gap={24} size={1} /><Controls showInteractive={false} /></ReactFlow></div></section>;
+  return <section className="panel graph-panel"><div className="panel-heading"><div><h2>{title}</h2><p>Drag states, scroll to zoom, and drag the canvas to pan.</p></div><div className="graph-actions"><button className="icon-button" onClick={() => exportDiagram(dfa, title, "png")} title="Download PNG" aria-label="Download graph as PNG"><Download size={15} /></button><button className="icon-button graph-svg" onClick={() => exportDiagram(dfa, title, "svg")} title="Download SVG" aria-label="Download graph as SVG">SVG</button><GraphToolbar reset={resetPositions} fitView={fitView} /></div></div><div className="graph-canvas"><ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} fitView fitViewOptions={{ padding: 0.38 }} minZoom={0.3} maxZoom={2.2} colorMode={darkMode ? "dark" : "light"} nodesConnectable={false} edgesFocusable={false}><Background color={darkMode ? "#334155" : "#cbd5e1"} gap={24} size={1} /><Controls showInteractive={false} /></ReactFlow></div></section>;
 }

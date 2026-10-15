@@ -1,0 +1,23 @@
+import assert from "node:assert/strict";
+import { createWorkspaceDocument, parseWorkspaceDocument, persistWorkspace, restoreWorkspace, resultReport, WORKSPACE_STORAGE_KEY } from "../src/utils/workspaceIO.js";
+import { minimizeDFA } from "../src/algorithms/dfaMinimizer.js";
+
+const dfa = { states: ["q0", "q1"], alphabet: ["0", "1"], startState: "q0", finalStates: ["q1"], transitions: { q0: { 0: "q0", 1: "q1" }, q1: { 0: "q0", 1: "q1" } } };
+const document = createWorkspaceDocument(dfa, "Round trip");
+assert.deepEqual(parseWorkspaceDocument(JSON.stringify(document)), { dfa, workspaceName: "Round trip" });
+assert.throws(() => parseWorkspaceDocument("not json"), /valid JSON/);
+assert.throws(() => parseWorkspaceDocument(JSON.stringify({ ...document, dfa: { ...dfa, transitions: { q0: { 0: "q0" }, q1: { 0: "q0", 1: "q1" } } } })), /missing transition/);
+assert.throws(() => parseWorkspaceDocument(JSON.stringify({ ...document, dfa: { ...dfa, startState: "missing" } })), /initial state/);
+assert.throws(() => parseWorkspaceDocument(JSON.stringify({ ...document, dfa: { ...dfa, alphabet: ["0", "0"] } })), /unique/);
+const result = minimizeDFA(dfa);
+const report = resultReport(result, "Round trip");
+assert.deepEqual(report.originalDFA, dfa);
+assert.deepEqual(report.minimizedDFA, result.minimizedDFA);
+assert.equal(report.originalStateCount, 2);
+const storage = new Map();
+global.window = { localStorage: { getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key) } };
+assert.equal(persistWorkspace(dfa, "Saved DFA"), true);
+assert.deepEqual(restoreWorkspace(), { dfa, workspaceName: "Saved DFA" });
+storage.set(WORKSPACE_STORAGE_KEY, "{broken");
+assert.equal(restoreWorkspace(), null);
+console.log("workspace IO tests passed");
