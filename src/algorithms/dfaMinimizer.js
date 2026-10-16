@@ -93,6 +93,28 @@ function getSignature(state, partitions, dfa) {
   );
 }
 
+function getUniqueGroupNames(partitions) {
+  const usedNames = new Set();
+
+  return partitions.map((group) => {
+    const baseName = `{${group.join(",")}}`;
+    let name = baseName;
+    let suffix = 2;
+
+    // Commas are valid in user-defined state names, so two different groups
+    // can otherwise stringify to the same display name (for example, ["a", "b"]
+    // and ["a,b"]). Keep the familiar notation where possible, while making
+    // every minimized DFA state identifier unique.
+    while (usedNames.has(name)) {
+      name = `${baseName} #${suffix}`;
+      suffix += 1;
+    }
+
+    usedNames.add(name);
+    return name;
+  });
+}
+
 export function minimizeDFA(dfa) {
   validateDFA(dfa);
 
@@ -186,9 +208,7 @@ export function minimizeDFA(dfa) {
     });
   }
 
-  const groupNames = partitions.map((group) =>
-    `{${group.join(",")}}`
-  );
+  const groupNames = getUniqueGroupNames(partitions);
 
   const stateToGroup = new Map();
 

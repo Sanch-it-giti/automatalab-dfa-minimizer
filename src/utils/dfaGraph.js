@@ -1,4 +1,12 @@
-import { Position } from "@xyflow/react";
+// React Flow's Position enum is a set of string values. Keeping these values
+// local makes graph generation a pure utility that can also be exercised in
+// Node-based reliability tests without loading the browser-oriented renderer.
+const Position = Object.freeze({
+  Top: "top",
+  Right: "right",
+  Bottom: "bottom",
+  Left: "left",
+});
 
 export const EMPTY_PARTITIONS = Object.freeze([]);
 

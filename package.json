@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
+    "test": "node tests/dfaSimulator.test.mjs && node tests/workspaceIO.test.mjs && node tests/dfaReliability.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
